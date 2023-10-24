@@ -93,15 +93,6 @@ public class LOC_KITL extends LinearOpMode {
                 telemetry.addData("Modo", "Modo B ativado (0.75)");
             }
 
-            if (gamepad1.right_trigger > 0.5) {
-                // Verifica se o gatilho RT foi pressionado para ativar a potência máxima
-                velocidade = 1.0;
-                potenciaMax = true;
-                telemetry.addData("Modo", "Potência máxima ativada!");
-
-            }
-
-
             if (Lb == true) {
                 // Verifica se o botão de bumper LB foi pressionado para iniciar uma rotação em 180
 
@@ -131,13 +122,16 @@ public class LOC_KITL extends LinearOpMode {
 
                 }
             }
-
-            if (gamepad2.y) { // Verifica se o botão Y do controle 2 foi pressionado
-                runtime.reset(); // Reseta o temporizador
-                while (runtime.seconds() < 3) { // Enquanto o tempo for menor que 3 segundos
-                    KIT.setPower(1); // Gira o motor com potência máxima
-                }
-                KIT.setPower(0); // Para o motor após 3 segundos
+//KIT_LINEAR
+            if (gamepad1.dpad_up) {
+                KIT.setPower(-0.5);
+                sleep(4500);
+                KIT.setPower(-0.1);
+            }
+            if (gamepad1.dpad_down) {
+                KIT.setPower(0.2);
+                sleep(4500);
+                KIT.setPower(0);
             }
 
 
