@@ -99,7 +99,7 @@ public class LOC_KITL extends LinearOpMode {
             final int POSICAO_ALVO_2 = -4900;
             boolean elevacaoEmAndamento = false;
 
-            if (!elevacaoEmAndamento && gamepad1.dpad_up) {
+            if (!elevacaoEmAndamento && gamepad2.dpad_up) {
                 elevacaoEmAndamento = true;
                 KIT.setTargetPosition(encoderPosicao + POSICAO_ALVO);
                 KIT.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -112,7 +112,7 @@ public class LOC_KITL extends LinearOpMode {
 
             //DECIDA
 
-            if (!elevacaoEmAndamento && gamepad1.dpad_down) {
+            if (!elevacaoEmAndamento && gamepad2.dpad_down) {
                 elevacaoEmAndamento = true;
                 KIT.setTargetPosition(encoderPosicao + POSICAO_ALVO_2);
                 KIT.setMode(DcMotor.RunMode.RUN_TO_POSITION);
