@@ -35,9 +35,6 @@ public class RoboAndeAutonomous extends LinearOpMode {
         motorDireito.setPower(0.5);
 
         while (opModeIsActive() && motorEsquerdo.isBusy() && motorDireito.isBusy()) {
-            telemetry.addData("Encoder Motor Esquerdo", motorEsquerdo.getCurrentPosition());
-            telemetry.addData("Encoder Motor Direito", motorDireito.getCurrentPosition());
-            telemetry.update();
         }
 
         motorEsquerdo.setPower(0);
