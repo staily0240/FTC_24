@@ -1,5 +1,5 @@
 //---------------Controll Hub----------------
- 
+
 //LMB porta 0
 //LMF porta 1
 //RMB porta 2
@@ -8,7 +8,7 @@
 //REV direit porta 0
 //REV_2 esquerda porta 1
 //REV_3 porta 2
-//REV_4 porta 3        
+//REV_4 porta 3
 
 //---------------Expansion Hub----------------
 
@@ -40,12 +40,13 @@ public class MainCode extends LinearOpMode {
     //Sistemas
     private DcMotor KIT, MA1, MA2;
     private double velocidade = 1.0;
+    private  double velocidadeC = 1.0;
     private boolean potenciaMax = false;
 
 
     @Override
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         double TPdegiro = 0.8;
         double PTdegiro = 1.0;
@@ -79,8 +80,7 @@ public class MainCode extends LinearOpMode {
         LMF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LMB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        MA2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        MA2 .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         waitForStart();
 
         KIT.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -89,11 +89,11 @@ public class MainCode extends LinearOpMode {
 
             boolean Rb = gamepad1.right_bumper;
             boolean Lb = gamepad1.left_bumper;
-            //---------
+            //-------------------------------
             double L = gamepad2.right_stick_y;
 
             double x2 = gamepad2.left_stick_y;
-           //----------
+           //---------------------------------
             double x = gamepad1.left_stick_x;
             double y = -gamepad1.left_stick_y;
 
@@ -105,10 +105,10 @@ public class MainCode extends LinearOpMode {
 
             double motorPower = Range.clip(joystickY, -1.0, 1.0);
 
-            double potenciaRF = y - x + rotacao; //double potenciaRF = y - x + rotacao;
-            double potenciaRB = y + x + rotacao; //double potenciaRB = y + x + rotacao;
+            double potenciaRF = y + x + rotacao; //double potenciaRF = y + x + rotacao;
+            double potenciaRB = y - x + rotacao; //double potenciaRB = y - x + rotacao;
             double potenciaLF = y + x - rotacao; //double potenciaLF = y + x - rotacao;
-            double potenciaLB = y - x - rotacao; //double potenciaLB = y - x - rotacao;
+            double potenciaLB = y - x - rotacao; //double potenciaLB = y - x - rotacao; 
 
             potenciaRF *= velocidade;
             potenciaRB *= velocidade;
@@ -143,7 +143,7 @@ public class MainCode extends LinearOpMode {
 
 //-----------------------------------------Kit Linear--------------------------------------------------------------
 
-            L *= velocidade;
+            L *= velocidadeC;
             KIT.setPower(L);
 
 //-----------------------------------------Garra-------------------------------------------------------------------
@@ -152,30 +152,69 @@ public class MainCode extends LinearOpMode {
                 servoMotor.setPosition(1.0);
                 servoMotor_2.setPosition(0);
             } else if (gamepad2.left_bumper) {
-                servoMotor.setPosition(0);          // direto abre
-                servoMotor_2.setPosition(1.0);
+                servoMotor.setPosition(0.5);          // direto abre
+                servoMotor_2.setPosition(0.5);
             }
+
 //-----------------------------------------Pulso-----------------------------------------------------------------
 
             if (gamepad2.y) {
-                servoMotor_3.setPosition(1.0);
-                servoMotor_4.setPosition(0);
-            } else if (gamepad2.b) {
-                servoMotor_4.setPosition(0);
-                servoMotor_3.setPosition(1.0);
+                servoMotor_3.setPosition(0.75); // esquerdo
+                servoMotor_4.setPosition(0.5); // direito
+            } else if (gamepad2.x) {
+                servoMotor_4.setPosition(1.0); // direito
+                servoMotor_3.setPosition(0.25); // esquerdo
             }
 //-----------------------------------------Jegão-----------------------------------------------------------------
-            x2 *= velocidade;
+            x2 *= velocidadeC;
             MA1.setPower(x2);
             MA2.setPower(x2);
 
             idle();
 
+//---------------------------------Sistemas automatizados---------------------------------------------------------
+            //Braço + Pulso
+
+            if(gamepad2.dpad_up){
+                MA1.setPower( - velocidadeC);
+                MA2.setPower( - velocidadeC);
+                servoMotor_3.setPosition(0.75);
+                servoMotor_4.setPosition(0.5);
+                sleep(820);
+            }else if(gamepad2.dpad_down){
+                MA1.setPower(velocidadeC );
+                MA2.setPower(velocidadeC );
+                servoMotor_4.setPosition(1.0);
+                servoMotor_3.setPosition(0.25);
+                sleep(600);
+                MA1.setPower( - velocidadeC / 3);
+                MA2.setPower( - velocidadeC / 3);
+                sleep(200);
+            }
+
+            //Coleta
+
+            if(gamepad2.dpad_right){
+
+                servoMotor_4.setPosition(1.0);
+                servoMotor_3.setPosition(0.25);
+                servoMotor.setPosition(0.5);
+                servoMotor_2.setPosition(0.5);
+                KIT.setPower( - 1.0);
+                sleep(1500);
+                servoMotor.setPosition(1.0);
+                servoMotor_2.setPosition(0);
+            }else if(gamepad2.dpad_left){
+                KIT.setPower(1.0);
+                sleep(1400);
+                servoMotor_3.setPosition(0.75);
+                servoMotor_4.setPosition(0.5);
+            }
             telemetry.addData("TICKS LMB", LMB.getCurrentPosition());
             telemetry.addData("TICKS LMF", LMF.getCurrentPosition());
             telemetry.addData("TICKS RMB", RMB.getCurrentPosition());
             telemetry.addData("TICKS 'RMF", RMF.getCurrentPosition());
-            telemetry.addData("TICKS JEGÃO", MA2.getCurrentPosition());
+            telemetry.addData("TICKS JEGÃO", MA1.getCurrentPosition());
             telemetry.update();
         }
         }
